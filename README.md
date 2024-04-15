@@ -1,5 +1,5 @@
 
-# AST: Audio Spectrogram Transformer - Transfer Learning for Accent Classification
+# <center>AST: Audio Spectrogram Transformer - Transfer Learning for Accent Classification</center>
 
  - [Introduction](#Introduction)
  - [Citing](#Citing)  
