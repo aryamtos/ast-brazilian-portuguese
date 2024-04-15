@@ -1,6 +1,6 @@
 
 # AST: Audio Spectrogram Transformer  
- - [News](#News)
+
  - [Introduction](#Introduction)
  - [Citing](#Citing)  
  - [Getting Started](#Getting-Started)
