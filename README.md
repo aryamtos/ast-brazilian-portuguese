@@ -1,5 +1,5 @@
 
-# AST: Audio Spectrogram Transformer  
+# AST: Audio Spectrogram Transformer - Transfer Learning for Accent Classification Brazilian Portuguese
 
  - [Introduction](#Introduction)
  - [Citing](#Citing)  
