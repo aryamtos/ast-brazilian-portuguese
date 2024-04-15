@@ -11,20 +11,6 @@
  - [Use Pretrained Model For Downstream Tasks](#Use-Pretrained-Model-For-Downstream-Tasks)
  - [Contact](#Contact)
 
-## News
-May, 2023: We have released demo for our audio large language model LTU (listen, think, and understand) that can do zero-shot audio classification and advanced reasoning. Try the online interactive demo **[[here]](https://github.com/YuanGongND/ltu)**.
-
-November, 2022: We decoupe `dataset` and hyper-parameters by moving hyper-parameters from `src/run.py` and `src/traintest.py` to `egs/{audioset,esc50,speechcommands}/run.sh`, so that it is easier to adapt the scripts to new datasets. This might cause a bug, please report if you have any issue running any recipe.
-
-October, 2022: We add an one-click, self-contained Google Colab script for (pretrained) AST inference with attention visualization. Please test the model with your own audio at [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YuanGongND/ast/blob/master/colab/AST_Inference_Demo.ipynb) by one click (no GPU needed). 
-
-May, 2022: It was found that newer `torchaudio` package has different behavior with older ones in SpecAugment and will cause a [bug](https://github.com/YuanGongND/ast/issues/58). We find a workaround and fixed it. If you are interested, see [here](https://colab.research.google.com/github/YuanGongND/ast/blob/master/colab/torchaudio_SpecMasking_1_1.ipynb).
-
-March, 2022: We released a new preprint [*CMKD: CNN/Transformer-Based Cross-Model Knowledge Distillation for Audio Classification*](https://arxiv.org/abs/2203.06760), where we proposed a knowledge distillation based method to further improve the AST model performance without changing its architecture.
-
-Feb, 2022: The [Self-Supervised AST (SSAST)](https://arxiv.org/abs/2110.09784) code is released [[**here**]](https://github.com/YuanGongND/ssast). SSAST use self-supervised pretraining instead of supervised ImageNet pretraining, so it supports arbitrary patch shape and size (e.g., a temperal frame and a square patch) with a good performance.
-
-Nov, 2021: The [PSLA training pipeline](https://arxiv.org/abs/2102.01243) used to train AST and baseline efficientnet model code is released [[**here**]](https://github.com/YuanGongND/psla). It is a strong audio classification training pipeline that can be used for most deep learning models. Also, it has a one-click FSD50K recipe that achieves SOTA 0.567 mAP.
 
 ## Introduction  
 
@@ -122,55 +108,6 @@ print(test_output.shape)
 
 We have an one-click, self-contained Google Colab script for (pretrained) AST inference and attention visualization. Please test the model with your own audio at [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YuanGongND/ast/blob/master/colab/AST_Inference_Demo.ipynb) by one click (no GPU needed).
 
-## ESC-50 Recipe  
-The ESC-50 recipe is in `ast/egs/esc50/run_esc.sh`, the script will automatically download the ESC-50 dataset and resample it to 16kHz, then run standard 5-cross validation and report the result.
-The recipe was tested on 4 GTX TITAN GPUs with 12GB memory. 
-The result is saved in `ast/egs/esc50/exp/yourexpname/acc_fold.csv` (the accuracy of fold 1-5 and the averaged accuracy), you can also check details in `result.csv` and `best_result.csv` (accuracy, AUC, loss, etc of each epoch / best epoch).
-We attached our log file in `ast/egs/esc50/test-esc50-f10-t10-p-b48-lr1e-5`, the model achieves `95.75%` accuracy.
-
-To run the recipe, simply comment out `. /data/sls/scratch/share-201907/slstoolchainrc` in `ast/egs/esc50/run_esc.sh`, adjust the path if needed, and run:
-``` 
-cd ast/egs/esc50
-(slurm user) sbatch run_esc50.sh
-(local user) ./run_esc50.sh
-```  
-
-## Speechcommands V2 Recipe  
-The Speechcommands recipe is in `ast/egs/speechcommands/run_sc.sh`, the script will automatically download the Speechcommands V2 dataset, train an AST model on the training set, validate it on the validation set, and evaluate it on the test set.
-The recipe was tested on 4 GTX TITAN GPUs with 12GB memory. 
-The result is saved in `ast/egs/speechcommands/exp/yourexpname/eval_result.csv` in format `[val_acc, val_AUC, eval_acc, eval_AUC]`, you can also check details in `result.csv` (accuracy, AUC, loss, etc of each epoch).
-We attached our log file in `ast/egs/speechcommends/test-speechcommands-f10-t10-p-b128-lr2.5e-4-0.5-false`, the model achieves `98.12%` accuracy.
-
-To run the recipe, simply comment out `. /data/sls/scratch/share-201907/slstoolchainrc` in `ast/egs/esc50/run_sc.sh`, adjust the path if needed, and run:
-``` 
-cd ast/egs/speechcommands
-(slurm user) sbatch run_sc.sh
-(local user) ./run_sc.sh
-```  
-
-## Audioset Recipe  
-Audioset is a little bit more complex, you will need to prepare your data json files (i.e., `train_data.json` and `eval_data.json`) by your self.
-The reason is that the raw wavefiles of Audioset is not released and you need to download them by yourself. We have put a sample json file in `ast/egs/audioset/data/datafiles`, please generate files in the same format (You can also refer to `ast/egs/esc50/prep_esc50.py` and `ast/egs/speechcommands/prep_sc.py`.). Please keep the label code consistent with `ast/egs/audioset/data/class_labels_indices.csv`.
-
-Once you have the json files, you will need to generate the sampling weight file of your training data (please check our [PSLA paper](https://arxiv.org/abs/2102.01243) to see why it is needed).
-```
-cd ast/egs/audioset
-python gen_weight_file.py ./data/datafiles/train_data.json
-```
-
-Then you just need to change the `tr_data` and `te_data` in `/ast/egs/audioset/run.sh` and then 
-``` 
-cd ast/egs/audioset
-(slurm user) sbatch run.sh
-(local user) ./run.sh
-```  
-You should get a model achieves `0.448 mAP` (without weight averaging) and `0.459` (with weight averaging). This is the best **single** model reported in the paper. 
-The result of each epoch is saved in `ast/egs/audioset/exp/yourexpname/result.csv` in format `[mAP, mAUC, precision, recall, d_prime, train_loss, valid_loss, cum_mAP, cum_mAUC, lr]`
-, where `cum_` results are the checkpoint ensemble results (i.e., averaging the prediction of checkpoint models of each epoch, please check our [PSLA paper](https://arxiv.org/abs/2102.01243) for details). The result of weighted averaged model is saved in `wa_result.csv` in format `[mAP, AUC, precision, recall, d-prime]`. We attached our log file in `ast/egs/audioset/test-full-f10-t10-pTrue-b12-lr1e-5/`, the model achieves `0.459` mAP.
-
-In order to reproduce ensembe results of `0.475 mAP` and `0.485 mAP`, please train 3 models use the same setting (i.e., repeat above three times) and train 6 models with different `tstride` and `fstride`, and average the output of the models. Please refer to `ast/egs/audioset/ensemble.py`. We attached our ensemble log in `/ast/egs/audioset/exp/ensemble-s.log` and `ensemble-m.log`. You can use our pretrained models (see below) to test ensemble result.
-
-We use `16kHz` for our experiments. Note that you might get a slightly different result with us due to the YouTube videos are being removed with the time and your downloaded version might be different with us. We provide our evaluation audio ids in `ast/egs/audioset/data/sanity_check/our_as_eval_id.csv`. And please note that in order to compre with the PSLA paper, for the **balanced training set** experiments (with results of `0.347 mAP` and `0.378 mAP`), we use the enhanced label set (i.e., a label set that is modified by an algorithm, please see the PSLA paper for detail). So if you train with the original label set for the balanced training set, you will get a slightly worse result. However, we do not use enhanced label set for **full AudioSet experiments**, i.e., for the `0.459 mAP` (single) and `0.485 mAP` (ensemble) results, we use exactly same data and label with the official release, so you should be able to reproduce that. 
 
 ## Pretrained Models
 We provide full AudioSet pretrained models and Speechcommands-V2-35 pretrained model.
@@ -214,5 +151,5 @@ Also, please note that we use `16kHz` audios for the pretrained model, so if you
 
 
  ## Contact
-If you have a question, please bring up an issue (preferred) or send me an email yuangong@mit.edu.
+If you have a question, or just want to share how you have use this, send me an email at ariadnenascime6@gmail.com
 
