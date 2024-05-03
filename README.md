@@ -16,29 +16,7 @@
 This repository contains Ariadne Matos fork  of the official implementation (in PyTorch) of the **Audio Spectrogram Transformer (AST)** proposed in the Interspeech 2021 paper [AST: Audio Spectrogram Transformer](https://arxiv.org/abs/2104.01778) (Yuan Gong, Yu-An Chung, James Glass).  
 
 AST is the first **convolution-free, purely** attention-based model for audio classification which supports variable length input and can be applied to various tasks.
-
-## Citing  
-The first paper proposes the Audio Spectrogram Transformer while the second paper describes the training pipeline that we applied on AST to achieve the new state-of-the-art on AudioSet.   
-```  
-@inproceedings{gong21b_interspeech,
-  author={Yuan Gong and Yu-An Chung and James Glass},
-  title={{AST: Audio Spectrogram Transformer}},
-  year=2021,
-  booktitle={Proc. Interspeech 2021},
-  pages={571--575},
-  doi={10.21437/Interspeech.2021-698}
-}
-```  
-```  
-@ARTICLE{gong_psla, 
-    author={Gong, Yuan and Chung, Yu-An and Glass, James},  
-    journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},   
-    title={PSLA: Improving Audio Tagging with Pretraining, Sampling, Labeling, and Aggregation},   
-    year={2021}, 
-    doi={10.1109/TASLP.2021.3120633}
-}
-```  
-  
+ 
 ## Getting Started  
 
 Step 1. Clone or download this repository and set it as the working directory, create a virtual environment and install the dependencies.
@@ -70,7 +48,7 @@ ASTModel(label_dim=527, \
 `audioset_pretrain`: If`True`,  use full AudioSet And ImageNet pretrained model. Currently only support `base384` model with `fstride=tstride=10`. (default: `False`, we recommend to set it as `True` for all tasks except AudioSet.)\
 `model_size`: The model size of AST, should be in `[tiny224, small224, base224, base384]` (default: `base384`).
 
-**Input:** Tensor in shape `[batch_size, temporal_frame_num, frequency_bin_num]`. Note: the input spectrogram should be normalized with dataset mean and std, see [here](https://github.com/YuanGongND/ast/blob/102f0477099f83e04f6f2b30a498464b78bbaf46/src/dataloader.py#L191). \
+**Input:** Tensor in shape `[batch_size, temporal_frame_num, frequency_bin_num]`. Note: the input spectrogram should be normalized with dataset mean and std, see [here](https://github.com/aryamtos/ast-brazilian-portuguese/blob/master/src/dataloader.py#L202). \
 **Output:** Tensor of raw logits (i.e., without Sigmoid) in shape `[batch_size, label_dim]`.
 
 ``` 
@@ -120,6 +98,28 @@ To summarize, to use our training pipeline, you need to creat data files and mod
 Also, please note that we use `16kHz` audios for the pretrained model, so if you want to use the pretrained model, please prepare your data in `16kHz`.
 
 
+## Citing  
+The first paper proposes the Audio Spectrogram Transformer while the second paper describes the training pipeline that we applied on AST to achieve the new state-of-the-art on AudioSet.   
+```  
+@inproceedings{gong21b_interspeech,
+  author={Yuan Gong and Yu-An Chung and James Glass},
+  title={{AST: Audio Spectrogram Transformer}},
+  year=2021,
+  booktitle={Proc. Interspeech 2021},
+  pages={571--575},
+  doi={10.21437/Interspeech.2021-698}
+}
+```  
+```  
+@ARTICLE{gong_psla, 
+    author={Gong, Yuan and Chung, Yu-An and Glass, James},  
+    journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},   
+    title={PSLA: Improving Audio Tagging with Pretraining, Sampling, Labeling, and Aggregation},   
+    year={2021}, 
+    doi={10.1109/TASLP.2021.3120633}
+}
+```  
+ 
  ## Contact
 If you have a question, or just want to share how you have use this, send me an email at ariadnenascime6@gmail.com
 
