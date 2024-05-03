@@ -75,8 +75,6 @@ test_output = ast_mdl(test_input)
 print(test_output.shape)  
 ```  
 
-We have an one-click, self-contained Google Colab script for (pretrained) AST inference and attention visualization. Please test the model with your own audio at [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/YuanGongND/ast/blob/master/colab/AST_Inference_Demo.ipynb) by one click (no GPU needed).
-
 ## Use Pretrained Model For Downstream Tasks
 
 You can use the pretrained AST model for your own dataset. There are two ways to doing so.
