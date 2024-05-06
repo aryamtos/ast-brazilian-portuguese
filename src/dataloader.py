@@ -14,9 +14,11 @@ import json
 import torchaudio
 import numpy as np
 import torch
+import os
 import torch.nn.functional
 from torch.utils.data import Dataset
 import random
+import matplotlib.pyplot as plt
 
 def make_index_dict(label_csv):
     index_lookup = {}
@@ -94,6 +96,22 @@ class AudiosetDataset(Dataset):
         self.index_dict = make_index_dict(label_csv)
         self.label_num = len(self.index_dict)
         print('number of classes is {:d}'.format(self.label_num))
+
+
+
+    def save_spectrogram(self,index,save_dir):
+        
+        fbank,_ = self.__getitem__(index)
+        fbank_numpy = fbank.numpy()
+
+        plt.figure(figsize=(10,5))
+        plt.imshow(fbank_numpy.T,aspect="auto",origin="lower")
+        plt.axis("off")
+        name_file  = os.path.join(save_dir,f'spectrogram_{index}.png')
+        plt.savefig(name_file,bbox_inches='tight',pad_inches=0)
+        plt.close()
+
+
 
     def _wav2fbank(self, filename, filename2=None):
         # mixup
